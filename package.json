@@ -1,0 +1,24 @@
+{
+  "name": "screenshot-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mingchia-andy-liu/screenshot-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mingchia-andy-liu/screenshot-bot/issues"
+  },
+  "homepage": "https://github.com/mingchia-andy-liu/screenshot-bot#readme",
+  "dependencies": {
+    "node-fetch": "^2.2.0",
+    "puppeteer": "^1.10.0"
+  }
+}

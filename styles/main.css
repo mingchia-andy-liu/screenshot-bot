@@ -1,0 +1,157 @@
+:root {
+    --color: hsl(0, 0%, 15%);
+    --bg-color: #e0e0e0;
+    --block-bg-color: #fff;
+
+    --odd-color: hsl(0, 0%, 95%);
+    --dd-color: #c1dcf0;
+    --td-color: #f7b125;
+    --qd-color: #724c9f;
+    --pd-color: #008348;
+
+    --winning: #00aa00;
+    --losing: #ff0000;
+}
+
+body {
+    color: var(--color);
+    background-color: var(--bg-color);
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+}
+
+.dark {
+    --color: hsl(0, 0%, 95%);
+    --bg-color: hsl(0, 0%, 40%);
+    --block-bg-color: hsl(0, 0%, 17%);
+
+    --odd-color: hsl(0, 0%, 25%);
+    --dd-color: #4c4ca6;
+    --td-color: #f19132;
+    --qd-color: #724c9f;
+    --pd-color: #008348;
+
+    --winning: #00ee00;
+}
+
+table {
+    border: none;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+th {
+    background-color: #046fdb;
+    color: #fff;
+    font-weight: 700;
+}
+
+th:first-child {
+    width: 150px;
+    border-right: 1px solid #fff;
+}
+
+th,
+td {
+    text-align: center;
+    min-width: 5vw;
+    height: 1.5em;
+}
+
+tr:nth-child(even) {
+    background-color: var(--odd-color);
+}
+
+[winning] {
+    color: var(--winning);
+}
+
+[losing] {
+    color: var(--losing);
+}
+
+/* Content */
+#content {
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px 0px;
+    background-color: var(--block-bg-color);
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+/* Header */
+.logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-around;
+}
+
+.header-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    flex-grow: 1;
+    font-size: 20px;
+}
+
+#header-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 2;
+
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#match {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+/* Player stats */
+tr[dd] {
+    background-color: var(--dd-color);
+}
+
+tr[td] {
+    background-color: var(--td-color);
+}
+
+tr[qd] {
+    background-color: var(--qd-color);
+}
+
+tr[pd] {
+    background-color: var(--pd-color);
+}
+
+tr td:first-child span {
+    font-size: 12px;
+    color: hsl(0, 0%, 50%);
+}
+
+.player-stats tr td:first-child {
+    text-align: left;
+}
+
+/* advanced */
+#advanced-stats th:not(:first-child) {
+    min-width: 10vw;
+}
+
+#advanced-extra-stats th {
+    width: 150px;
+}
