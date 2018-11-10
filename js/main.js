@@ -149,8 +149,8 @@ const decoratePlayers = (teamSelector, team) => {
             </tr>
         `
     })
-    table$.insertAdjacentHTML('beforeend', header)
-    table$.insertAdjacentHTML('beforeend', playersRows.join(''))
+    const tbody = `${header}${playersRows.join('')}`
+    table$.insertAdjacentHTML('beforeend', tbody)
 }
 
 const decorateTeamStats = (home, visitor) => {

@@ -48,15 +48,16 @@ th {
     font-weight: 700;
 }
 
-th:first-child {
+tr th:first-child,
+tr td:first-child {
     width: 150px;
-    border-right: 1px solid #fff;
+    border-right: 1px solid hsl(0, 0%, 70%);
 }
 
 th,
 td {
     text-align: center;
-    min-width: 5vw;
+    min-width: 50px;
     height: 1.5em;
 }
 
@@ -147,9 +148,14 @@ tr td:first-child span {
     text-align: left;
 }
 
+/* team stats */
+#team-stats th:not(:first-child) {
+    min-width: 66px;
+}
+
 /* advanced */
 #advanced-stats th:not(:first-child) {
-    min-width: 10vw;
+    min-width: 145px;
 }
 
 #advanced-extra-stats th {

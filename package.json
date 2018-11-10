@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/mingchia-andy-liu/screenshot-bot#readme",
   "dependencies": {
+    "dotenv": "^6.1.0",
+    "form-data": "^2.3.3",
     "node-fetch": "^2.2.0",
-    "puppeteer": "^1.10.0"
+    "puppeteer": "^1.10.0",
+    "snoowrap": "^1.15.2"
   }
 }
