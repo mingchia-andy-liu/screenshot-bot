@@ -1,16 +1,16 @@
+// require('dotenv').config()
 const snoowrap = require('snoowrap')
-require('dotenv').config()
 
 const EOL = require('os').EOL
 const LINE_BREAK = `${EOL}${EOL}&nbsp;${EOL}${EOL}`
-const SUBREDDIT_NAME = 'nba'
+const SUBREDDIT_NAME = process.env.REDDIT_SUBREDDIT_NAME
 
+// See https://github.com/not-an-aardvark/reddit-oauth-helper
 const config = {
-    client_id: process.env.REDDIT_CLIENT_ID,
-    client_secret: process.env.REDDIT_CLIENT_SECRET,
-    username: process.env.REDDIT_USERNAME,
-    password: process.env.REDDIT_PASSWORD,
-    user_agent: 'test-bot'
+    userAgent: process.env.REDDIT_USER_AGENT,
+    clientId: process.env.REDDIT_CLIENT_ID,
+    clientSecret: process.env.REDDIT_CLIENT_SECRET,
+    refreshToken: process.env.REDDIT_REFRESH_TOKEN,
 };
 
 const r = new snoowrap(config)
@@ -22,40 +22,39 @@ const getText = (light, dark) => {
     text += dark ? `[Dark mode](${dark})${EOL}${EOL}` : ''
     text += LINE_BREAK
     text += `---${EOL}${EOL}`
-    text += '^(I am a bot. *Beep Boop*. Help me improve)'
+    text += '^(I am a bot. *Beep Boop*. Help me improve.)'
     return text
 }
 
-const postComment = async (threadId, light, dark) => {
-    const post = await r.getSubmission(threadId)
-    console.log(post.title)
-    post.reply(getText(light, dark))
+const postComment = async (thread, light, dark) => {
+    if (!light && !dark) {
+        console.log('Both upload failed.')
+        return;
+    }
+    await thread.reply(getText(light, dark))
 }
 
-const testPost = async(light, dark) => {
-    const post = await r.getSubmission('9v6egf')
-    await post.reply(getText(light, dark))
-    // console.log(post.title)
-}
-
-const getTop100New = async () => {
+const getNewPGTs = async () => {
+    console.log('getNewPGTs')
     const posts = await r.getNew(SUBREDDIT_NAME, {
-        limit: 170,
+        limit: 2,
     })
-    // console.log(posts.length)
-    return posts.filter(post => post.title.includes('Post Game Thread'))
+    return posts.filter(post => {
+        const title = post.title.toLowerCase()
+        return title.includes('post') && title.includes('game') && title.includes('thread')
+    })
 }
 
 const getComments = async () => {
+    console.log('getComments')
     const comments = await r.getUser(process.env.REDDIT_USERNAME).getComments({
-        limit: 15,
+        limit: 30,
     })
     return comments
 }
 
 module.exports = {
-    postComment: postComment,
-    getNew: getTop100New,
+    getNewPGTs: getNewPGTs,
     getComments: getComments,
-    test: testPost,
+    postComment: postComment,
 }

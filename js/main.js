@@ -314,8 +314,7 @@ const decorateTeamStats = (home, visitor) => {
 
     const teamStats$ = $('#team-stats')
     teamStats$.insertAdjacentHTML('beforeend', titleRow)
-    teamStats$.insertAdjacentHTML('beforeend', visitorRow)
-    teamStats$.insertAdjacentHTML('beforeend', homeRow)
+    teamStats$.insertAdjacentHTML('beforeend', visitorRow + homeRow)
 }
 
 const decorateAdvenced = (home, visitor, game) => {
