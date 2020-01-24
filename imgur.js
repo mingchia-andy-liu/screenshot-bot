@@ -24,5 +24,6 @@ exports.upload = async (img, title) => {
     console.log(json);
     throw Error('Request failed:' + json.data.error);
   }
+  console.log('uploaded:', title)
   return json;
 };

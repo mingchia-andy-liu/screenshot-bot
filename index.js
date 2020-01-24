@@ -1,5 +1,7 @@
 const puppeteer = require('puppeteer');
 const format = require('date-fns/format');
+const subDays = require('date-fns/subDays');
+const {utcToZonedTime} = require('date-fns-tz');
 
 const {upload} = require('./imgur');
 const {fetchBox, fetchGames} = require('./nba');
@@ -32,13 +34,27 @@ const extractGames = (games) => {
   });
 };
 
-(async () => {
+const getApiDate = () => {
+  const est = utcToZonedTime(new Date(), 'America/New_York');
+  const etHour = format(est, 'HH');
+  // if ET time has not pass 6 am, don't jump ahead
+  if (+etHour < 6) {
+    return format(subDays(est, 1), 'yyyyMMdd');
+  } else {
+    return format(est, 'yyyyMMdd');
+  }
+};
+
+const handler = async (req, res) => {
   // Initialization
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox'],
+  });
 
   // fetch all the games for date
-  const todayStr = format(new Date(), 'yyyyMMdd');
-  console.log('fetching...', todayStr);
+
+  const todayStr = getApiDate();
+  console.log('fetching...', todayStr, new Date().toISOString());
   let games = await fetchGames(todayStr);
   if (games == null || games.length === 0) {
     return;
@@ -89,8 +105,8 @@ const extractGames = (games) => {
     await page.goto(URL);
     let element = await page.$('html');
     const light = await element.screenshot({
-      // encoding: 'base64',
-      path: __dirname + `/images/light-${data.vls.tn} vs ${data.hls.tn}.png`,
+      encoding: 'base64',
+      // path: __dirname + `/images/light-${data.vls.tn} vs ${data.hls.tn}.png`,
     });
 
     // changing to dark mode
@@ -100,8 +116,8 @@ const extractGames = (games) => {
     });
     element = await page.$('html');
     const dark = await element.screenshot({
-      // encoding: 'base64',
-      path: __dirname + `/images/dark-${data.vls.tn} vs ${data.hls.tn}.png`,
+      encoding: 'base64',
+      // path: __dirname + `/images/dark-${data.vls.tn} vs ${data.hls.tn}.png`,
     });
 
     console.log('uploading to imgur...');
@@ -123,5 +139,13 @@ const extractGames = (games) => {
     await reddit.postComment(postGameThread, lightImgurLink, darkImgurLink);
     console.log('finished posting to reddit...');
   });
-  await allSettled(promises).finally(async () => await browser.close());
-})();
+
+  await allSettled(promises)
+      .then(async () => await browser.close())
+      .catch(async () => await browser.close());
+
+  console.log('end of request');
+  res.sendStatus(200);
+};
+
+exports.handler = handler;

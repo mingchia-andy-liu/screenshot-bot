@@ -31,6 +31,7 @@ const postComment = async (thread, light, dark) => {
     console.log('Both upload failed.');
     return;
   }
+  console.log('posting comments', light, dark)
   await thread.reply(getText(light, dark));
 };
 
@@ -50,7 +51,7 @@ const getNewPGTs = async () => {
 };
 
 const getComments = async () => {
-  console.log('getComments');
+  console.log('[getComments] with userName', process.env.REDDIT_USERNAME);
   const comments = await r.getUser(process.env.REDDIT_USERNAME).getComments({
     limit: 30,
   });
