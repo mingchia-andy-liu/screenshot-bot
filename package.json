@@ -2,11 +2,12 @@
   "name": "screenshot-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "./script/build.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",
