@@ -42,20 +42,20 @@ const decoratePlayers = (teamSelector, team) => {
             <th>MIN</th>
             <th>PTS</th>
             <th>FGM-A</th>
-            <th>FG%</th>
-            <th>3PM-A</th>
-            <th>3P%</th>
+            <th class="short-hide">FG%</th>
+            <th class="short-hide">3PM-A</th>
+            <th class="short-hide">3P%</th>
             <th>FTM-A</th>
-            <th>FT%</th>
-            <th>OREB</th>
-            <th>DREB</th>
+            <th class="short-hide">FT%</th>
+            <th class="short-hide">OREB</th>
+            <th class="short-hide">DREB</th>
             <th>REB</th>
             <th>AST</th>
             <th>STL</th>
             <th>BLK</th>
             <th>TOV</th>
             <th>PF</th>
-            <th>+/-</th>
+            <th class="short-hide">+/-</th>
         </tr>
     `;
 
@@ -108,18 +108,21 @@ const decoratePlayers = (teamSelector, team) => {
                     ${fieldGoalsMade}-${fieldGoalsAttempted}
                 </td>
                 <td
+                    class="short-hide"
                     ${winning(fgp, 59, fieldGoalsAttempted >= 5)}
                     ${losing(fgp, 31, fieldGoalsAttempted >= 5)}
                 >
                     ${fgp}${fgp !== '-' ? '%' : ''}
                 </td>
                 <td
+                    class="short-hide"
                     ${winning(tpp, 59, threePointersAttempted >= 5)}
                     ${losing(tpp, 31, threePointersAttempted >= 5)}
                 >
                     ${threePointersMade}-${threePointersAttempted}
                 </td>
                 <td
+                    class="short-hide"
                     ${winning(tpp, 59, threePointersAttempted >= 5)}
                     ${losing(tpp, 31, threePointersAttempted >= 5)}
                 >
@@ -132,20 +135,21 @@ const decoratePlayers = (teamSelector, team) => {
                     ${freeThrowsMade}-${freeThrowsAttempted}
                 </td>
                 <td
+                    class="short-hide"
                     ${winning(ftp, 89, freeThrowsAttempted >= 5)}
                     ${losing(ftp, 61, freeThrowsAttempted >= 5)}
                 >
                     ${ftp}${ftp !== '-' ? '%' : ''}
                 </td>
-                <td>${reboundsOffensive}</td>
-                <td>${reboundsDefensive}</td>
+                <td class="short-hide">${reboundsOffensive}</td>
+                <td class="short-hide">${reboundsDefensive}</td>
                 <td ${winning(reboundsDefensive + reboundsOffensive, 9)}>${reboundsDefensive + reboundsOffensive}</td>
                 <td ${winning(assists, 9)}>${assists}</td>
                 <td ${winning(steals, 9)}>${steals}</td>
                 <td ${winning(blocks, 9)}>${blocks}</td>
                 <td ${losingWhenMore(turnovers, 4)}>${turnovers}</td>
                 <td ${losingWhenMore(fouls, 4)}>${fouls}</td>
-                <td>${plusMinus}</td>
+                <td  class="short-hide">${plusMinus}</td>
             </tr>
         `;
   });
@@ -200,17 +204,17 @@ const decorateTeamStats = (home, visitor) => {
             <th>Team</th>
             <th>FGM-A</th>
             <th>FG%</th>
-            <th>3PM-A</th>
-            <th>3P%</th>
+            <th class="short-hide">3PM-A</th>
+            <th class="short-hide">3P%</th>
             <th>FTM-A</th>
             <th>FT%</th>
-            <th>TREB</th>
+            <th class="short-hide">TREB</th>
             <th>REB</th>
             <th>AST</th>
             <th>STL</th>
             <th>BLK</th>
             <th>TOV</th>
-            <th>PF</th>
+            <th class="short-hide">PF</th>
         </tr>
     `;
 
@@ -230,12 +234,14 @@ const decorateTeamStats = (home, visitor) => {
                 ${hfgp}%
             </td>
             <td
+                class="short-hide"
                 ${winning(htpp, 49)}
                 ${losing(htpp, 31)}
             >
                 ${homeThreePointersMade}-${homeThreePointersAttempted}
             </td>
             <td
+                class="short-hide"
                 ${winning(htpp, 49)}
                 ${losing(htpp, 31)}
             >
@@ -253,13 +259,13 @@ const decorateTeamStats = (home, visitor) => {
             >
                 ${hftp}%
             </td>
-            <td>${homeTeamRebounds}</td>
+            <td class="short-hide">${homeTeamRebounds}</td>
             <td>${homeReboundsDefensive + homeReboundsOffensive}</td>
             <td>${homeAssists}</td>
             <td>${homeSteals}</td>
             <td>${homeBlocks}</td>
             <td>${homeTurnovers}</td>
-            <td>${homeFouls}</td>
+            <td class="short-hide">${homeFouls}</td>
         </tr>
     `;
 
@@ -279,12 +285,14 @@ const decorateTeamStats = (home, visitor) => {
                 ${vfgp}%
             </td>
             <td
+                class="short-hide"
                 ${winning(vtpp, 49)}
                 ${losing(vtpp, 31)}
             >
                 ${visitorThreePointersMade}-${visitorThreePointersAttempted}
             </td>
             <td
+                class="short-hide"
                 ${winning(vtpp, 49)}
                 ${losing(vtpp, 31)}
             >
@@ -302,13 +310,13 @@ const decorateTeamStats = (home, visitor) => {
             >
                 ${vftp}%
             </td>
-            <td>${visitorTeamRebounds}</td>
+            <td class="short-hide">${visitorTeamRebounds}</td>
             <td>${visitorReboundsDefensive + visitorReboundsOffensive}</td>
             <td>${visitorAssists}</td>
             <td>${visitorSteals}</td>
             <td>${visitorBlocks}</td>
             <td>${visitorTurnovers}</td>
-            <td>${visitorFouls}</td>
+            <td class="short-hide">${visitorFouls}</td>
         </tr>
     `;
 

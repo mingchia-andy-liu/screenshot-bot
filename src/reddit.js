@@ -16,23 +16,25 @@ const config = {
 const r = new Snoowrap(config);
 
 // mark down
-const getText = (light, dark) => {
+const getText = (light, dark, lightShort, darkShort) => {
   let text = `**Mobile Friendly Version**:${EOL}${EOL}`;
   text += light ? `[Imgur link](${light})${EOL}${EOL}` : '';
   text += dark ? `[Dark mode](${dark})${EOL}${EOL}` : '';
+  text += lightShort ? `[Light mode condensed](${lightShort})${EOL}${EOL}` : '';
+  text += darkShort ? `[Dark mode condensed](${darkShort})${EOL}${EOL}` : '';
   text += LINE_BREAK;
   text += `---${EOL}${EOL}`;
-  text += '^(I am a bot. *Beep Boop*. Help me improve.)';
+  text += '^(I am a bot. *Beep Boop*. Help me improve. Feature request or bug report to /u/boxscore-bot)';
   return text;
 };
 
-const postComment = async (thread, light, dark) => {
-  if (!light && !dark) {
-    console.log('Both upload failed.');
+const postComment = async (thread, light, dark, lightShort, darkShort) => {
+  if (!light && !dark && !lightShort && !darkShort) {
+    console.log('All upload failed.');
     return;
   }
-  console.log('posting comments', light, dark);
-  await thread.reply(getText(light, dark));
+  console.log('posting comments');
+  await thread.reply(getText(light, dark, lightShort, darkShort));
 };
 
 const getNewPGTs = async () => {
