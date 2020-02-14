@@ -9,7 +9,7 @@ const {allSettled} = require('./utils');
 const reddit = require('./reddit');
 
 const VIEWPORT = {width: 1440, height: 1080};
-const URL = `file://${__dirname}/ui/index-short.html`;
+const URL = `file://${__dirname}/ui/index.html`;
 
 const insertEnv = (page, name, value) => {
   page.evaluateOnNewDocument(`
@@ -106,7 +106,7 @@ const handler = async (req, res) => {
     let element = await page.$('html');
     const light = await element.screenshot({
       encoding: 'base64',
-      // path: __dirname + `/images/light-${data.vls.tn} vs ${data.hls.tn}.png`,
+      // path: __dirname + `/images/light-${data.vls.tn}-vs-${data.hls.tn}.png`,
     });
 
     // changing to dark mode
@@ -117,7 +117,7 @@ const handler = async (req, res) => {
     element = await page.$('html');
     const dark = await element.screenshot({
       encoding: 'base64',
-      // path: __dirname + `/images/dark-${data.vls.tn} vs ${data.hls.tn}.png`,
+      // path: __dirname + `/images/dark-${data.vls.tn}-vs-${data.hls.tn}.png`,
     });
 
     console.log('uploading to imgur...');
@@ -140,10 +140,13 @@ const handler = async (req, res) => {
     console.log('finished posting to reddit...');
   });
 
-  await allSettled(promises)
-      .then(async () => await browser.close())
-      .catch(async () => await browser.close());
-
+  const responses = await allSettled(promises);
+  for (const response of responses) {
+    if (response.status === 'rejected') {
+      console.log('rejected', response.reason);
+    }
+  }
+  await browser.close();
   console.log('end of request');
   res.sendStatus(200);
 };
