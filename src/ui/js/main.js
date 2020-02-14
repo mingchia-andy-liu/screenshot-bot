@@ -21,11 +21,11 @@ const decorateSummary = (home, visitor, periodStatus) => {
   const playedPeriods = periods.slice(0, periodStatus);
   const homePeriods = playedPeriods.map((key) => `<td ${winning(home[key], visitor[key])}>${home[key]}</td>`);
   const visitorPeriods = playedPeriods.map((key) => `<td ${winning(visitor[key], home[key])}>${visitor[key]}</td>`);
-  const titlePeiods = playedPeriods.map((key) => `<th>${key.toUpperCase()}</th>`);
+  const titlePeriods = playedPeriods.map((key) => `<th>${key.toUpperCase()}</th>`);
 
   const homeRow = `<tr><th>${home.tc}</th>${homePeriods.join('')}<td ${winning(home.s, visitor.s)}>${home.s}</td></tr>`;
   const visitorRow = `<tr><th>${visitor.tc}</th>${visitorPeriods.join('')}<td ${winning(home.s, visitor.s)}>${visitor.s}</td></tr>`;
-  const titleRow = `<tr><th>Team</th>${titlePeiods.join('')}<th>Final</th></tr>`;
+  const titleRow = `<tr><th>Team</th>${titlePeriods.join('')}<th>Final</th></tr>`;
 
   const summary$ = $('#summary');
   summary$.insertAdjacentHTML('beforeend', titleRow);
@@ -317,7 +317,7 @@ const decorateTeamStats = (home, visitor) => {
   teamStats$.insertAdjacentHTML('beforeend', visitorRow + homeRow);
 };
 
-const decorateAdvenced = (home, visitor, game) => {
+const decorateAdvanced = (home, visitor, game) => {
   const ht = home.tstsg;
   const vt = visitor.tstsg;
 
@@ -381,9 +381,9 @@ const decorateAdvenced = (home, visitor, game) => {
     `;
 
 
-  const advenced = $('#advanced-stats');
-  advenced.insertAdjacentHTML('beforeend', titleRow);
-  advenced.insertAdjacentHTML('beforeend', visitorRow + homeRow);
+  const advanced = $('#advanced-stats');
+  advanced.insertAdjacentHTML('beforeend', titleRow);
+  advanced.insertAdjacentHTML('beforeend', visitorRow + homeRow);
 
   $('#advanced-extra-stats').insertAdjacentHTML('beforeend', `
         <tr>
@@ -423,7 +423,7 @@ const format = () => {
 
   // decorate team stats
   decorateTeamStats(home, visitor);
-  decorateAdvenced(home, visitor, box.gsts);
+  decorateAdvanced(home, visitor, box.gsts);
 };
 
 format();
