@@ -8,7 +8,8 @@ const {fetchBox, fetchGames} = require('./nba');
 const {allSettled} = require('./utils');
 const reddit = require('./reddit');
 
-const VIEWPORT = {width: 1440, height: 1080};
+const VIEWPORT = {width: 1400, height: 1080};
+const VIEWPORT_SHORT = {width: 920, height: 1080};
 const URL = `file://${__dirname}/ui/index.html`;
 
 const insertEnv = (page, name, value) => {
@@ -49,6 +50,7 @@ const handler = async (req, res) => {
   // Initialization
   const browser = await puppeteer.launch({
     args: ['--no-sandbox'],
+    // headless: false,
   });
 
   // fetch all the games for date
@@ -99,44 +101,63 @@ const handler = async (req, res) => {
 
     // screenshot
     console.log('Taking a screenshot...', game.id);
+    const screenshot = async (name, vn, hn) => {
+      return element.screenshot({
+        encoding: 'base64',
+        // path: __dirname + `/images/${name}-${vn}-vs-${hn}.png`,
+      });
+    };
+    const pageConfig = async (dark = false, short = false, viewPort = null) => {
+      if (viewPort) {
+        await page.setViewport(viewPort);
+      }
+      if (dark || short) {
+        await page.evaluate((dark, short) => {
+          const body = document.querySelector('body');
+          body.className = dark ? 'dark' : '';
+          body.className += short ? ' short' : '';
+        }, dark, short);
+      }
+    };
     const page = await browser.newPage();
-    await page.setViewport(VIEWPORT);
+    await pageConfig(false, false, VIEWPORT);
     insertEnv(page, 'box', data);
     await page.goto(URL);
     let element = await page.$('html');
-    const light = await element.screenshot({
-      encoding: 'base64',
-      // path: __dirname + `/images/light-${data.vls.tn}-vs-${data.hls.tn}.png`,
-    });
+    const light = await screenshot('light', data.vls.tn, data.hls.tn);
 
     // changing to dark mode
-    await page.evaluate(() => {
-      const body = document.querySelector('body');
-      body.className += 'dark';
-    });
+    await pageConfig(true);
     element = await page.$('html');
-    const dark = await element.screenshot({
-      encoding: 'base64',
-      // path: __dirname + `/images/dark-${data.vls.tn}-vs-${data.hls.tn}.png`,
-    });
+    const dark = await screenshot('dark', data.vls.tn, data.hls.tn);
+
+    // short view
+    await pageConfig(false, true, VIEWPORT_SHORT);
+    const lightShort = await screenshot('light-s', data.vls.tn, data.hls.tn);
+    await pageConfig(true, true);
+    const darkShort = await screenshot('dark-s', data.vls.tn, data.hls.tn);
 
     console.log('uploading to imgur...');
-    let lightImgurLink;
-    let darkImgurLink;
     const responses = await allSettled([
       upload(light, `${data.gdtutc} ${data.vls.tn} vs ${data.hls.tn}`),
       upload(dark, `${data.gdtutc} ${data.vls.tn} vs ${data.hls.tn}`),
+      upload(lightShort, `${data.gdtutc} ${data.vls.tn} vs ${data.hls.tn}`),
+      upload(darkShort, `${data.gdtutc} ${data.vls.tn} vs ${data.hls.tn}`),
     ]);
-    if (responses[0].status === 'fulfilled') {
-      lightImgurLink = responses[0].value.data.link;
-      console.log(lightImgurLink);
+    const links = [];
+    for (const response of responses) {
+      if (response.status === 'fulfilled') {
+        links.push(response.value.data.link);
+        console.log(response.value.data.link);
+      } else {
+        links.push(undefined);
+      }
     }
-    if (responses[1].status === 'fulfilled') {
-      darkImgurLink = responses[1].value.data.link;
-      console.log(darkImgurLink);
-    }
-    console.log('posting to reddit...');
-    await reddit.postComment(postGameThread, lightImgurLink, darkImgurLink);
+    console.log('posting to reddit...', links);
+    await reddit.postComment(
+        postGameThread,
+        ...links,
+    );
     console.log('finished posting to reddit...');
   });
 

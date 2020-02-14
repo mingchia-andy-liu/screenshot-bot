@@ -22,6 +22,10 @@ body {
     margin: 0;
 }
 
+body.short .short-hide {
+    display: none;
+}
+
 .dark {
     --color: hsl(0, 0%, 95%);
     --bg-color: hsl(0, 0%, 40%);
@@ -120,19 +124,23 @@ tr:nth-child(even) {
 }
 
 /* Player stats */
-tr[dd] {
+.tip span {
+    padding: 0 10px;
+}
+
+[dd] {
     background-color: var(--dd-color);
 }
 
-tr[td] {
+[td] {
     background-color: var(--td-color);
 }
 
-tr[qd] {
+[qd] {
     background-color: var(--qd-color);
 }
 
-tr[pd] {
+[pd] {
     background-color: var(--pd-color);
 }
 
