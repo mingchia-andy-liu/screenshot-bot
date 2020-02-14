@@ -31,7 +31,7 @@ const postComment = async (thread, light, dark) => {
     console.log('Both upload failed.');
     return;
   }
-  console.log('posting comments', light, dark)
+  console.log('posting comments', light, dark);
   await thread.reply(getText(light, dark));
 };
 
