@@ -50,7 +50,6 @@ const handler = async (req, res) => {
   // Initialization
   const browser = await puppeteer.launch({
     args: ['--no-sandbox'],
-    // headless: false,
   });
 
   // fetch all the games for date
