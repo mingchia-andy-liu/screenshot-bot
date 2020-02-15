@@ -26,6 +26,7 @@ body.short .short-hide {
     display: none;
 }
 
+/* util */
 .dark {
     --color: hsl(0, 0%, 95%);
     --bg-color: hsl(0, 0%, 40%);
@@ -38,6 +39,10 @@ body.short .short-hide {
     --pd-color: #008348;
 
     --winning: #00ee00;
+}
+
+.hidden {
+    display: none !important;
 }
 
 table {
@@ -93,6 +98,14 @@ tr:nth-child(even) {
     align-items: center;
     width: 100px;
     height: 100px;
+}
+
+.text-logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
 }
 
 .header {

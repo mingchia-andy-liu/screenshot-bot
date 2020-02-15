@@ -12,7 +12,15 @@ const decorateHeaderTeam = (selector, city, name, abbr) => {
   const name$ = $(`${selector} .name`);
   const logo$ = $(`${selector} .logo`);
   name$.textContent = `${city} ${name}`;
-  logo$.setAttribute('src', `assets/logos/${abbr}.svg`);
+  const team = getTeam({abbr})
+  if (team) {
+    logo$.setAttribute('src', `assets/logos/${abbr}.svg`);
+  } else {
+    const textLogo$ = $(`${selector} .text-logo`);
+    logo$.classList.add('hidden');
+    textLogo$.classList.remove('hidden');
+    textLogo$.innerHTML = name;
+  }
 };
 
 const decorateSummary = (home, visitor, periodStatus) => {
