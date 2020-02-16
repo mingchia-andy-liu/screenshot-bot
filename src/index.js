@@ -47,133 +47,144 @@ const getApiDate = () => {
 };
 
 const handler = async (req, res) => {
-  // Initialization
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox'],
-  });
-
   // fetch all the games for date
-
   const todayStr = getApiDate();
   console.log('fetching...', todayStr, new Date().toISOString());
   let games = await fetchGames(todayStr);
   if (games == null || games.length === 0) {
+    console.log('No games today.');
+    res.sendStatus(200);
     return;
   }
 
-  // search sub reddit's recent post-game threads
-  newPosts = await reddit.getNewPGTs();
-  comments = await reddit.getComments();
-  games = extractGames(games);
-  const promises = games.map(async (game) => {
-    console.log('trying to find', game.homeName, game.visitorName);
-    const postGameThread = newPosts.find((post) => {
-      const title = post.title.toLowerCase();
-      return (title.includes(game.homeName.toLowerCase()) ||
-            title.includes(game.homeCity.toLowerCase()) ||
-            title.includes(game.homeNickname.toLowerCase())) &&
-            (title.includes(game.visitorName.toLowerCase()) ||
-            title.includes(game.visitorCity.toLowerCase()) ||
-            title.includes(game.visitorNickname.toLowerCase()));
-      }
-    );
-    if (postGameThread == null) {
-      console.log(`didn't find ${game.homeName}, ${game.visitorName}`);
-      return;
-    }
-
-    console.log('found thread', postGameThread.id);
-    const hasCommented = comments.find(
-        (comment) => comment.parent_id === `t3_${postGameThread.id}`,
-    ) != null;
-
-    console.log('hasCommented', hasCommented);
-    if (hasCommented) {
-      return;
-    }
-
-    console.log('fetching game box', game.id, 'thread', postGameThread.id);
-    const data = await fetchBox(game.id);
-    if (data == null) {
-      return;
-    }
-    const htn = data.hls.tn;
-    const vtn = data.vls.tn;
-
-    // screenshot
-    console.log('Taking a screenshot...', game.id);
-    const screenshot = async (name, vn, hn) => {
-      return element.screenshot({
-        encoding: 'base64',
-        // path: __dirname + `/images/${name}-${vn}-vs-${hn}.png`,
-      });
-    };
-    const pageConfig = async (dark = false, short = false, viewPort = null) => {
-      if (viewPort) {
-        await page.setViewport(viewPort);
-      }
-      await page.evaluate((dark, short) => {
-        const body = document.querySelector('body');
-        if (dark) {
-          body.classList.add('dark');
-        } else {
-          body.classList.remove('dark');
-        }
-        if (short) {
-          body.classList.add('short');
-        } else {
-          body.classList.remove('short');
-        }
-      }, dark, short);
-    };
-    const page = await browser.newPage();
-    await pageConfig(false, false, VIEWPORT);
-    insertEnv(page, 'box', data);
-    await page.goto(URL);
-    let element = await page.$('html');
-    const light = await screenshot('light', vtn, htn);
-
-    // changing to dark mode
-    await pageConfig(true);
-    element = await page.$('html');
-    const dark = await screenshot('dark', vtn, htn);
-
-    // short view
-    await pageConfig(false, true, VIEWPORT_SHORT);
-    const lightShort = await screenshot('light-s', vtn, htn);
-    await pageConfig(true, true);
-    const darkShort = await screenshot('dark-s', vtn, htn);
-
-    console.log('uploading to imgur...');
-    const responses = await allSettled([
-      upload(light, `${data.gdtutc} ${vtn} vs ${htn}`),
-      upload(dark, `${data.gdtutc} ${vtn} vs ${htn}`),
-      upload(lightShort, `${data.gdtutc} ${vtn} vs ${htn}`),
-      upload(darkShort, `${data.gdtutc} ${vtn} vs ${htn}`),
-    ]);
-    const links = [];
-    for (const response of responses) {
-      if (response.status === 'fulfilled') {
-        links.push(response.value.data.link);
-        console.log(response.value.data.link);
-      } else {
-        links.push(undefined);
-      }
-    }
-    console.log('posting to reddit...', links);
-    await reddit.postComment(postGameThread, ...links);
-    console.log('finished posting to reddit...');
+  // Initialization
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox'],
   });
+  try {
+    // search sub reddit's recent post-game threads
+    newPosts = await reddit.getNewPGTs();
+    comments = await reddit.getComments();
 
-  const responses = await allSettled(promises);
-  for (const response of responses) {
-    if (response.status === 'rejected') {
-      console.log('rejected', response.reason);
+    games = extractGames(games);
+    const promises = games.map(async (game) => {
+      if (game.period_time.game_status !== '3') {
+        console.log('game has not finished.');
+        return;
+      }
+
+      console.log('trying to find', game.homeName, game.visitorName);
+      const postGameThread = newPosts.find((post) => {
+        const title = post.title.toLowerCase();
+        return (title.includes(game.homeName.toLowerCase()) ||
+              title.includes(game.homeCity.toLowerCase()) ||
+              title.includes(game.homeNickname.toLowerCase())) &&
+              (title.includes(game.visitorName.toLowerCase()) ||
+              title.includes(game.visitorCity.toLowerCase()) ||
+              title.includes(game.visitorNickname.toLowerCase()));
+      });
+      if (postGameThread == null) {
+        console.log(`didn't find ${game.homeName}, ${game.visitorName}`);
+        return;
+      }
+
+      console.log('found thread', postGameThread.id);
+      const hasCommented = comments.find(
+          (comment) => comment.parent_id === `t3_${postGameThread.id}`,
+      ) != null;
+
+      console.log('hasCommented', hasCommented);
+      if (hasCommented) {
+        return;
+      }
+
+      console.log('fetching game box', game.id, 'thread', postGameThread.id);
+      const data = await fetchBox(game.id);
+      if (data == null) {
+        return;
+      }
+      const htn = data.hls.tn;
+      const vtn = data.vls.tn;
+
+      // screenshot
+      console.log('Taking a screenshot...', game.id);
+      const screenshot = async (name, vn, hn) => {
+        return element.screenshot({
+          encoding: 'base64',
+          // path: __dirname + `/images/${name}-${vn}-vs-${hn}.png`,
+        });
+      };
+      const pageConfig = async (dark = null, short = null, viewPort = null) => {
+        if (viewPort) {
+          await page.setViewport(viewPort);
+        }
+        await page.evaluate((dark, short) => {
+          const body = document.querySelector('body');
+          if (dark) {
+            body.classList.add('dark');
+          } else {
+            body.classList.remove('dark');
+          }
+          if (short) {
+            body.classList.add('short');
+          } else {
+            body.classList.remove('short');
+          }
+        }, dark, short);
+      };
+      const page = await browser.newPage();
+      await pageConfig(false, false, VIEWPORT);
+      insertEnv(page, 'box', data);
+      await page.goto(URL);
+      let element = await page.$('html');
+      const light = await screenshot('light', vtn, htn);
+
+      // changing to dark mode
+      await pageConfig(true);
+      element = await page.$('html');
+      const dark = await screenshot('dark', vtn, htn);
+
+      // short view
+      await pageConfig(false, true, VIEWPORT_SHORT);
+      const lightShort = await screenshot('light-s', vtn, htn);
+      await pageConfig(true, true);
+      const darkShort = await screenshot('dark-s', vtn, htn);
+
+      console.log('uploading to imgur...');
+      const responses = await allSettled([
+        upload(light, `${data.gdtutc} ${vtn} vs ${htn}`),
+        upload(dark, `${data.gdtutc} ${vtn} vs ${htn}`),
+        upload(lightShort, `${data.gdtutc} ${vtn} vs ${htn}`),
+        upload(darkShort, `${data.gdtutc} ${vtn} vs ${htn}`),
+      ]);
+      const links = [];
+      for (const response of responses) {
+        if (response.status === 'fulfilled') {
+          links.push(response.value.data.link);
+          console.log(response.value.data.link);
+        } else {
+          links.push(undefined);
+        }
+      }
+      console.log('posting to reddit...', links);
+      await reddit.postComment(postGameThread, ...links);
+      console.log('finished posting to reddit...');
+    });
+
+    const responses = await allSettled(promises);
+    for (const response of responses) {
+      if (response.status === 'rejected') {
+        console.log('rejected', response.reason);
+      }
     }
+    await browser.close();
+    console.log('end of request');
+    res.sendStatus(200);
+  } catch (error) {
+    console.log('Unexpected error', error);
+    await browser.close();
+    res.sendStatus(400);
   }
-  await browser.close();
-  console.log('end of request');
-  res.sendStatus(200);
 };
 
 exports.handler = handler;
