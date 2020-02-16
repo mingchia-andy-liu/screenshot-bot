@@ -65,7 +65,7 @@ const handler = async (req, res) => {
   newPosts = await reddit.getNewPGTs();
   comments = await reddit.getComments();
   games = extractGames(games);
-  const promises = games.map(async (game, i) => {
+  const promises = games.map(async (game) => {
     console.log('trying to find', game.homeName, game.visitorName);
     const postGameThread = newPosts.find((post) => {
       const title = post.title.toLowerCase();
@@ -75,7 +75,7 @@ const handler = async (req, res) => {
             (title.includes(game.visitorName.toLowerCase()) ||
             title.includes(game.visitorCity.toLowerCase()) ||
             title.includes(game.visitorNickname.toLowerCase()));
-    },
+      }
     );
     if (postGameThread == null) {
       console.log(`didn't find ${game.homeName}, ${game.visitorName}`);
@@ -91,12 +91,14 @@ const handler = async (req, res) => {
     if (hasCommented) {
       return;
     }
-    console.log('fetching game box', game.id, 'thread', postGameThread.id);
 
+    console.log('fetching game box', game.id, 'thread', postGameThread.id);
     const data = await fetchBox(game.id);
     if (data == null) {
       return;
     }
+    const htn = data.hls.tn;
+    const vtn = data.vls.tn;
 
     // screenshot
     console.log('Taking a screenshot...', game.id);
@@ -110,38 +112,44 @@ const handler = async (req, res) => {
       if (viewPort) {
         await page.setViewport(viewPort);
       }
-      if (dark || short) {
-        await page.evaluate((dark, short) => {
-          const body = document.querySelector('body');
-          body.className = dark ? 'dark' : '';
-          body.className += short ? ' short' : '';
-        }, dark, short);
-      }
+      await page.evaluate((dark, short) => {
+        const body = document.querySelector('body');
+        if (dark) {
+          body.classList.add('dark');
+        } else {
+          body.classList.remove('dark');
+        }
+        if (short) {
+          body.classList.add('short');
+        } else {
+          body.classList.remove('short');
+        }
+      }, dark, short);
     };
     const page = await browser.newPage();
     await pageConfig(false, false, VIEWPORT);
     insertEnv(page, 'box', data);
     await page.goto(URL);
     let element = await page.$('html');
-    const light = await screenshot('light', data.vls.tn, data.hls.tn);
+    const light = await screenshot('light', vtn, htn);
 
     // changing to dark mode
     await pageConfig(true);
     element = await page.$('html');
-    const dark = await screenshot('dark', data.vls.tn, data.hls.tn);
+    const dark = await screenshot('dark', vtn, htn);
 
     // short view
     await pageConfig(false, true, VIEWPORT_SHORT);
-    const lightShort = await screenshot('light-s', data.vls.tn, data.hls.tn);
+    const lightShort = await screenshot('light-s', vtn, htn);
     await pageConfig(true, true);
-    const darkShort = await screenshot('dark-s', data.vls.tn, data.hls.tn);
+    const darkShort = await screenshot('dark-s', vtn, htn);
 
     console.log('uploading to imgur...');
     const responses = await allSettled([
-      upload(light, `${data.gdtutc} ${data.vls.tn} vs ${data.hls.tn}`),
-      upload(dark, `${data.gdtutc} ${data.vls.tn} vs ${data.hls.tn}`),
-      upload(lightShort, `${data.gdtutc} ${data.vls.tn} vs ${data.hls.tn}`),
-      upload(darkShort, `${data.gdtutc} ${data.vls.tn} vs ${data.hls.tn}`),
+      upload(light, `${data.gdtutc} ${vtn} vs ${htn}`),
+      upload(dark, `${data.gdtutc} ${vtn} vs ${htn}`),
+      upload(lightShort, `${data.gdtutc} ${vtn} vs ${htn}`),
+      upload(darkShort, `${data.gdtutc} ${vtn} vs ${htn}`),
     ]);
     const links = [];
     for (const response of responses) {
@@ -153,10 +161,7 @@ const handler = async (req, res) => {
       }
     }
     console.log('posting to reddit...', links);
-    await reddit.postComment(
-        postGameThread,
-        ...links,
-    );
+    await reddit.postComment(postGameThread, ...links);
     console.log('finished posting to reddit...');
   });
 
