@@ -1,4 +1,3 @@
-// require('dotenv').config()
 const Snoowrap = require('snoowrap');
 
 const EOL = require('os').EOL;
@@ -17,18 +16,18 @@ const r = new Snoowrap(config);
 
 // mark down
 const getText = (light, dark, lightShort, darkShort) => {
-  let text = `**Mobile Friendly Version**:${EOL}${EOL}`;
+  let text = `**Mobile Friendly Version (image box scores)**:${EOL}${EOL}`;
   text += light ? `[Imgur link](${light})${EOL}${EOL}` : '';
   text += dark ? `[Dark mode](${dark})${EOL}${EOL}` : '';
   text += lightShort ? `[Light mode condensed](${lightShort})${EOL}${EOL}` : '';
   text += darkShort ? `[Dark mode condensed](${darkShort})${EOL}${EOL}` : '';
   text += LINE_BREAK;
   text += `---${EOL}${EOL}`;
-  text += '^(I am a bot. *Beep Boop*. Help me improve. Feature request or bug report to /u/boxscore-bot)';
+  text += '^(I am a bot. *Beep Boop*. Help me improve. Feature request or bug report, please DM /u/boxscore-bot)';
   return text;
 };
 
-const postComment = async (thread, light, dark, lightShort, darkShort) => {
+exports.postComment = async (thread, light, dark, lightShort, darkShort) => {
   if (!light && !dark && !lightShort && !darkShort) {
     console.log('All upload failed.');
     return;
@@ -37,10 +36,10 @@ const postComment = async (thread, light, dark, lightShort, darkShort) => {
   await thread.reply(getText(light, dark, lightShort, darkShort));
 };
 
-const getNewPGTs = async () => {
-  console.log('getNewPGTs');
+exports.getNewPGTs = async () => {
+  console.log('[getNewPGTs]');
   const posts = await r.getNew(SUBREDDIT_NAME, {
-    limit: 2,
+    limit: 50,
   });
   return posts.filter((post) => {
     const title = post.title.toLowerCase();
@@ -52,16 +51,10 @@ const getNewPGTs = async () => {
   });
 };
 
-const getComments = async () => {
+exports.getComments = async () => {
   console.log('[getComments] with userName', process.env.REDDIT_USERNAME);
   const comments = await r.getUser(process.env.REDDIT_USERNAME).getComments({
     limit: 30,
   });
   return comments;
-};
-
-module.exports = {
-  getNewPGTs: getNewPGTs,
-  getComments: getComments,
-  postComment: postComment,
 };

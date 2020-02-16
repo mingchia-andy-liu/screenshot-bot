@@ -23,17 +23,10 @@ const getLeagueSlug = (gid) => {
 };
 
 exports.fetchGames = async (date) => {
-  console.log('fetching games');
+  console.log('[fetchGames]');
   try {
     const res = await fetch(`https://data.nba.com/data/5s/json/cms/noseason/scoreboard/${date}/games.json`);
     const json = await res.json();
-    if (json == null ||
-          json.sports_content == null ||
-          json.sports_content.games == null ||
-          json.sports_content.games.game == null
-    ) {
-      throw Error();
-    }
     return json.sports_content.games.game;
   } catch (error) {
     console.log('error', error);
@@ -42,7 +35,7 @@ exports.fetchGames = async (date) => {
 };
 
 exports.fetchBox = async (id) => {
-  console.log('fetching box:', id);
+  console.log('[fetchBox]', id);
   try {
     const year = getLeagueYear();
     const leagueSlug = getLeagueSlug(id);
