@@ -32,7 +32,7 @@ exports.postComment = async (thread, light, dark, lightShort, darkShort) => {
     console.log('All upload failed.');
     return;
   }
-  console.log('posting comments');
+  console.log('posting to', thread.id);
   await thread.reply(getText(light, dark, lightShort, darkShort));
 };
 
