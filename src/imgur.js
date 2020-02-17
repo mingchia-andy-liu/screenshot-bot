@@ -6,6 +6,10 @@ exports.upload = async (img, title) => {
   const form = new FormData();
   form.append('image', img);
   form.append('title', title);
+  if (process.env.IMGUR_ALBUM_ID) {
+    console.log('Adding the image to an album:', process.env.IMGUR_ALBUM_ID);
+    form.append('album', process.env.IMGUR_ALBUM_ID)
+  }
   const options = {
     method: 'POST',
     headers: {

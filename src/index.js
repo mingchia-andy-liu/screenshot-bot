@@ -167,7 +167,6 @@ const handler = async (req, res) => {
       for (const response of responses) {
         if (response.status === 'fulfilled') {
           links.push(response.value.data.link);
-          console.log(response.value.data.link);
         } else {
           links.push(undefined);
         }
