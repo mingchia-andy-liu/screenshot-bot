@@ -2,7 +2,7 @@ const Snoowrap = require('snoowrap');
 
 const EOL = require('os').EOL;
 const LINE_BREAK = `${EOL}${EOL}&nbsp;${EOL}${EOL}`;
-const SUBREDDIT_NAME = process.env.REDDIT_SUBREDDIT_NAME;
+const SUBREDDIT_NAMES = process.env.REDDIT_SUBREDDIT_NAMES;
 
 // See https://github.com/not-an-aardvark/reddit-oauth-helper
 const config = {
@@ -37,9 +37,16 @@ exports.postComment = async (thread, light, dark, lightShort, darkShort) => {
 };
 
 exports.getNewPGTs = async () => {
-  console.log('[getNewPGTs]');
-  const posts = await r.getNew(SUBREDDIT_NAME, {
-    limit: 50,
+  // use `+` to join  multiple subreddits, ie: nba+nbaspurs+lakers
+  console.log('[getNewPGTs]', SUBREDDIT_NAMES);
+  const numOfSubReddit = SUBREDDIT_NAMES.split('+').length;
+  if (numOfSubReddit === 0) {
+    return [];
+  }
+
+  const posts = await r.getNew(SUBREDDIT_NAMES, {
+    // each sub gets 30 quota.
+    limit: 30 * numOfSubReddit,
   });
   return posts.filter((post) => {
     const title = post.title.toLowerCase();
