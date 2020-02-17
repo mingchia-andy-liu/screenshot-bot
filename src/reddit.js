@@ -17,13 +17,13 @@ const r = new Snoowrap(config);
 // mark down
 const getText = (light, dark, lightShort, darkShort) => {
   let text = `**Mobile Friendly Version (image box scores)**:${EOL}${EOL}`;
-  text += light ? `[Imgur link](${light})${EOL}${EOL}` : '';
-  text += dark ? `[Dark mode](${dark})${EOL}${EOL}` : '';
-  text += lightShort ? `[Light mode condensed](${lightShort})${EOL}${EOL}` : '';
-  text += darkShort ? `[Dark mode condensed](${darkShort})${EOL}${EOL}` : '';
+  text += light ? `[Full box score (light mode)](${light})${EOL}${EOL}` : '';
+  text += dark ? `[Full box score (dark mode)](${dark})${EOL}${EOL}` : '';
+  text += lightShort ? `[Condensed (light mode)](${lightShort})${EOL}${EOL}` : '';
+  text += darkShort ? `[Condensed (dark mode)](${darkShort})${EOL}${EOL}` : '';
   text += LINE_BREAK;
   text += `---${EOL}${EOL}`;
-  text += '^(I am a bot. *Beep Boop*. Help me improve. Feature request or bug report, please DM /u/boxscore-bot)';
+  text += '^(I am a bot. Help me improve. Feature request or bug report, please DM /u/boxscore-bot)';
   return text;
 };
 

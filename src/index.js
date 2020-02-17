@@ -9,7 +9,7 @@ const {allSettled} = require('./utils');
 const reddit = require('./reddit');
 
 const VIEWPORT = {width: 1400, height: 1080};
-const VIEWPORT_SHORT = {width: 920, height: 1080};
+const VIEWPORT_SHORT = {width: 940, height: 1080};
 const URL = `file://${__dirname}/ui/index.html`;
 
 const insertEnv = (page, name, value) => {
