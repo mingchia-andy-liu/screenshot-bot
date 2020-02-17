@@ -74,7 +74,7 @@ const handler = async (req, res) => {
       }
 
       console.log('trying to find', game.homeName, game.visitorName);
-      const postGameThread = newPosts.find((post) => {
+      const postGameThreads = newPosts.filter((post) => {
         const title = post.title.toLowerCase();
         return (title.includes(game.homeName.toLowerCase()) ||
               title.includes(game.homeCity.toLowerCase()) ||
@@ -83,22 +83,28 @@ const handler = async (req, res) => {
               title.includes(game.visitorCity.toLowerCase()) ||
               title.includes(game.visitorNickname.toLowerCase()));
       });
-      if (postGameThread == null) {
+      if (postGameThreads.length === 0) {
         console.log(`didn't find ${game.homeName}, ${game.visitorName}`);
         return;
       }
 
-      console.log('found thread', postGameThread.id);
-      const hasCommented = comments.find(
-          (comment) => comment.parent_id === `t3_${postGameThread.id}`,
-      ) != null;
+      console.log('found threads', postGameThreads.map((t) => t.id));
+      const threadsWithNoComment = postGameThreads.filter((t) => {
+        return comments.find(
+            (comment) => comment.parent_id === `t3_${t.id}`,
+        ) == null;
+      });
 
-      console.log('hasCommented', hasCommented);
-      if (hasCommented) {
+
+      console.log(
+          'threadsWithNoComment',
+          threadsWithNoComment.map((t) => t.id),
+      );
+      if (threadsWithNoComment.length === 0) {
         return;
       }
 
-      console.log('fetching game box', game.id, 'thread', postGameThread.id);
+      console.log('fetching game box', game.id);
       const data = await fetchBox(game.id);
       if (data == null) {
         return;
@@ -167,7 +173,9 @@ const handler = async (req, res) => {
         }
       }
       console.log('posting to reddit...', links);
-      await reddit.postComment(postGameThread, ...links);
+      for (const thread of threadsWithNoComment) {
+        await reddit.postComment(thread, ...links);
+      }
       console.log('finished posting to reddit...');
     });
 
