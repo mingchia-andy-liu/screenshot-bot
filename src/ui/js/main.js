@@ -32,7 +32,7 @@ const decorateSummary = (home, visitor, periodStatus) => {
   const titlePeriods = playedPeriods.map((key) => `<th>${key.toUpperCase()}</th>`);
 
   const homeRow = `<tr><th>${home.tc}</th>${homePeriods.join('')}<td ${winning(home.s, visitor.s)}>${home.s}</td></tr>`;
-  const visitorRow = `<tr><th>${visitor.tc}</th>${visitorPeriods.join('')}<td ${winning(home.s, visitor.s)}>${visitor.s}</td></tr>`;
+  const visitorRow = `<tr><th>${visitor.tc}</th>${visitorPeriods.join('')}<td ${winning(visitor.s, home.s)}>${visitor.s}</td></tr>`;
   const titleRow = `<tr><th>Team</th>${titlePeriods.join('')}<th>Final</th></tr>`;
 
   const summary$ = $('#summary');
