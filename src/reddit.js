@@ -16,14 +16,15 @@ const r = new Snoowrap(config);
 
 // mark down
 const getText = (light, dark, lightShort, darkShort) => {
-  let text = `**Mobile Friendly Version (image box scores)**:${EOL}${EOL}`;
-  text += light ? `[Full box score (light mode)](${light})${EOL}${EOL}` : '';
-  text += dark ? `[Full box score (dark mode)](${dark})${EOL}${EOL}` : '';
-  text += lightShort ? `[Condensed (light mode)](${lightShort})${EOL}${EOL}` : '';
-  text += darkShort ? `[Condensed (dark mode)](${darkShort})${EOL}${EOL}` : '';
+  const eols = `${EOL}${EOL}`;
+  let text = `**Mobile Friendly Version (image box scores)**:${eols}`;
+  text += light ? `[Full box score (light mode)](${light})${eols}` : '';
+  text += dark ? `[Full box score (dark mode)](${dark})${eols}` : '';
+  text += lightShort ? `[Condensed (light mode)](${lightShort})${eols}` : '';
+  text += darkShort ? `[Condensed (dark mode)](${darkShort})${eols}` : '';
   text += LINE_BREAK;
-  text += `---${EOL}${EOL}`;
-  text += '^(I am a bot. Help me improve. Feature request or bug report, please DM /u/boxscore-bot)';
+  text += `---${eols}`;
+  text += '^(I am a bot. Made by /u/blaze_kid)';
   return text;
 };
 
