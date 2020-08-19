@@ -146,20 +146,20 @@ tr:nth-child(even) {
     padding: 0 10px;
 }
 
-[dd] {
-    background-color: var(--dd-color);
+.dd {
+    background-color: var(--dd-color) !important;
 }
 
-[td] {
-    background-color: var(--td-color);
+.td {
+    background-color: var(--td-color) !important;
 }
 
-[qd] {
-    background-color: var(--qd-color);
+.qd {
+    background-color: var(--qd-color) !important;
 }
 
-[pd] {
-    background-color: var(--pd-color);
+.pd {
+    background-color: var(--pd-color) !important;
 }
 
 tr td:first-child span {

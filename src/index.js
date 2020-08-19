@@ -26,10 +26,10 @@ const extractGames = (games) => {
   return games.map((game) => {
     return Object.assign({}, game, {
       homeCity: game.home.city,
-      homeName: game.home.team_code,
+      homeName: game.home.name,
       homeNickname: game.home.nickname,
       visitorCity: game.visitor.city,
-      visitorName: game.visitor.team_code,
+      visitorName: game.visitor.name,
       visitorNickname: game.visitor.nickname,
     });
   });
@@ -60,6 +60,7 @@ const handler = async (req, res) => {
   // Initialization
   const browser = await puppeteer.launch({
     args: ['--no-sandbox'],
+    // headless: false
   });
   try {
     // search sub reddit's recent post-game threads
@@ -68,7 +69,7 @@ const handler = async (req, res) => {
 
     games = extractGames(games);
     const promises = games.map(async (game) => {
-      if (game.period_time.game_status !== '3') {
+      if (game.periodTime.gameStatus !== '3') {
         console.log('game has not finished.');
         return;
       }
@@ -116,7 +117,6 @@ const handler = async (req, res) => {
       console.log('Taking a screenshot...', game.id);
       const screenshot = async (name, vn, hn) => {
         return element.screenshot({
-          encoding: 'base64',
           // path: __dirname + `/images/${name}-${vn}-vs-${hn}.png`,
         });
       };

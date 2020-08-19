@@ -1,11 +1,24 @@
 const fetch = require('node-fetch');
+const getMonth = require('date-fns/getMonth');
+const getYear = require('date-fns/getYear');
+const addYears = require('date-fns/addYears');
+
+const {convertDaily} = require('./convert');
 
 const endpoint = (year, leagueSlug) => `https://data.nba.com/data/10s/v2015/json/mobile_teams/${leagueSlug}/${year}/scores/gamedetail`;
 
 const getLeagueYear = () => {
   const date = new Date();
   // if it's after july, it's a new season
-  return date.getMonth() >= 6 ? date.getFullYear() : date.getFullYear() - 1;
+  let year;
+  if (getYear(date) === 2020) {
+    // 2020 season is delayed and season should finish in 2020-09
+    year = getMonth(date) > 8 ? getYear(date) : getYear(addYears(date, -1));
+  } else {
+    // if it's after july, it's a new season
+    year = getMonth(date) > 5 ? getYear(date) : getYear(addYears(date, -1));
+  }
+  return year;
 };
 
 const getLeagueSlug = (gid) => {
@@ -25,9 +38,9 @@ const getLeagueSlug = (gid) => {
 exports.fetchGames = async (date) => {
   console.log('[fetchGames]');
   try {
-    const res = await fetch(`https://data.nba.com/data/5s/json/cms/noseason/scoreboard/${date}/games.json`);
+    const res = await fetch(`http://data.nba.net/prod/v2/${date}/scoreboard.json`);
     const json = await res.json();
-    return json.sports_content.games.game;
+    return json.games.map(convertDaily);
   } catch (error) {
     console.log('error', error);
     return [];
