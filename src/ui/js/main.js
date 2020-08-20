@@ -105,7 +105,7 @@ const decoratePlayers = (teamSelector, team) => {
     const doubles = hasDoubles(player);
 
     return `
-            <tr ${doubles}>
+            <tr class=${doubles}>
                 <td>${name} <span>${startingPosition}</span></td>
                 <td>${formatMinutes(minutes, seconds)}</td>
                 <td ${winning(points, 9)}>${points}</td>
