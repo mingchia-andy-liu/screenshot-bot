@@ -173,16 +173,16 @@ tr td:first-child span {
 
 /* team stats */
 #team-stats th:not(:first-child) {
-    width: 90px;
-}
-
-.short #team-stats th:not(:first-child) {
-    width: 80px;
+    width: 100px;
 }
 
 /* advanced */
 #advanced-stats th:not(:first-child) {
     min-width: 180px;
+}
+
+.short #advanced-stats th:not(:first-child) {
+    min-width: 125px;
 }
 
 #advanced-extra-stats th {

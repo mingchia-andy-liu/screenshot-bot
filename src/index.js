@@ -173,7 +173,7 @@ const handler = async (req, res) => {
       }
       console.log('posting to reddit...', links);
       for (const thread of threadsWithNoComment) {
-        await reddit.postComment(thread, ...links);
+        await reddit.postComment(thread, links[0], links[1], links[2], links[3]);
       }
       console.log('finished posting to reddit...');
     });
