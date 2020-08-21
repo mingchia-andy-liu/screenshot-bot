@@ -5,7 +5,7 @@ const {utcToZonedTime} = require('date-fns-tz');
 
 const {upload} = require('./imgur');
 const {fetchBox, fetchGames} = require('./nba');
-const {allSettled} = require('./utils');
+const {allSettled, sleep} = require('./utils');
 const reddit = require('./reddit');
 
 const VIEWPORT = {width: 1400, height: 1080};
@@ -157,6 +157,7 @@ const handler = async (req, res) => {
       const darkShort = await screenshot('dark-s', vtn, htn);
 
       console.log('uploading to imgur...');
+      await sleep(Math.random() * 10000)
       const responses = await allSettled([
         upload(light, `${data.gdtutc} ${vtn} vs ${htn}`),
         upload(dark, `${data.gdtutc} ${vtn} vs ${htn}`),

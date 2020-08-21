@@ -5,3 +5,5 @@ exports.allSettled = (promises) => {
           (err) => ({status: 'rejected', reason: err})));
   return Promise.all(wrappedPromises);
 };
+
+exports.sleep = (t) => new Promise((r) => setTimeout(r, t))

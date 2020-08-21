@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const FormData = require('form-data');
 
 exports.upload = async (img, title) => {
-  const IMGUR_URI = 'https://api.imgur.com/3/upload?';
+  const IMGUR_URI = 'https://api.imgur.com/3/upload';
   const form = new FormData();
   form.append('image', img, title);
   // if (process.env.IMGUR_ALBUM_ID) {
