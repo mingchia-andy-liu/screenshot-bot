@@ -24,7 +24,7 @@
   "dependencies": {
     "date-fns": "^2.16.1",
     "date-fns-tz": "^1.0.10",
-    "eslint": "^7.8.0",
+    "eslint": "^7.8.1",
     "form-data": "^3.0.0",
     "node-fetch": "^2.6.0",
     "puppeteer": "^5.2.1",
