@@ -27,7 +27,7 @@
     "eslint": "^7.19.0",
     "form-data": "^3.0.0",
     "node-fetch": "^2.6.1",
-    "puppeteer": "^7.0.4",
+    "puppeteer": "^7.1.0",
     "snoowrap": "^1.22.0"
   },
   "devDependencies": {
