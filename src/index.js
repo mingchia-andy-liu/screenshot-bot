@@ -157,7 +157,7 @@ const handler = async (req, res) => {
       const darkShort = await screenshot('dark-s', vtn, htn);
 
       console.log('uploading to imgur...');
-      await sleep(Math.random() * 10000)
+      await sleep(Math.random() * 10000);
       const responses = await allSettled([
         upload(light, `${data.gdtutc} ${vtn} vs ${htn}`),
         upload(dark, `${data.gdtutc} ${vtn} vs ${htn}`),
@@ -174,7 +174,13 @@ const handler = async (req, res) => {
       }
       console.log('posting to reddit...', links);
       for (const thread of threadsWithNoComment) {
-        await reddit.postComment(thread, links[0], links[1], links[2], links[3]);
+        await reddit.postComment(
+            thread,
+            links[0],
+            links[1],
+            links[2],
+            links[3],
+        );
       }
       console.log('finished posting to reddit...');
     });
