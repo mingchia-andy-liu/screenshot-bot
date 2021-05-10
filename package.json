@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/mingchia-andy-liu/screenshot-bot#readme",
   "dependencies": {
-    "date-fns": "^2.21.2",
+    "date-fns": "^2.21.3",
     "date-fns-tz": "^1.1.4",
     "eslint": "^7.25.0",
     "form-data": "^4.0.0",
